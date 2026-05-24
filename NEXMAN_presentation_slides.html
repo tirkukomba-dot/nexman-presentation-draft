@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>NEXMAN — Клиентская презентация</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    color: #111;
+    background: #f0f0f0;
+    line-height: 1.55;
+  }
+
+  /* ─── ОБЛОЖКА ДОКУМЕНТА ─── */
+  .doc-cover {
+    background: #111;
+    color: #fff;
+    padding: 60px;
+    margin-bottom: 32px;
+    page-break-after: always;
+  }
+  .doc-cover h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .doc-cover .sub { font-size: 14px; color: #aaa; margin-bottom: 40px; }
+  .doc-meta { display: flex; gap: 40px; }
+  .doc-meta-item { }
+  .doc-meta-item .label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .doc-meta-item .value { font-size: 14px; font-weight: 500; }
+  .doc-notation { margin-top: 48px; padding-top: 32px; border-top: 1px solid #333; }
+  .doc-notation h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 16px; }
+  .notation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .notation-item { display: flex; gap: 10px; align-items: flex-start; }
+  .notation-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .notation-badge.red { background: #ff3b30; color: #fff; }
+  .notation-badge.optional { background: #ff9500; color: #fff; }
+  .notation-badge.designer { background: #007aff; color: #fff; }
+  .notation-text { font-size: 12px; color: #ccc; }
+
+  /* ─── СЛАЙД ─── */
+  .slide {
+    background: #fff;
+    margin-bottom: 32px;
+    page-break-after: always;
+    min-height: 210mm;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 48px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .slide-number {
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .slide-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+
+  .slide-body { padding: 32px 48px; flex: 1; }
+
+  .slide-meta {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .slide-meta-item { font-size: 11.5px; color: #555; }
+  .slide-meta-item strong { color: #111; font-weight: 600; }
+
+  /* ─── ЭЛЕМЕНТЫ СОДЕРЖАНИЯ ─── */
+  h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #888;
+    margin-bottom: 12px;
+    margin-top: 28px;
+  }
+  h3:first-child { margin-top: 0; }
+
+  .variants { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .variant {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .variant-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #888;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+  .variant-text { font-size: 14px; font-weight: 600; color: #111; }
+
+  .facts-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #e8e8e8;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .fact-cell {
+    background: #fff;
+    padding: 16px;
+    text-align: center;
+  }
+  .fact-number { font-size: 24px; font-weight: 900; letter-spacing: -1px; color: #111; display: block; }
+  .fact-desc { font-size: 11px; color: #777; margin-top: 2px; }
+
+  .award-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid #111;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+  }
+  .award-icon { font-size: 20px; }
+  .award-text { }
+  .award-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .award-sub { font-size: 12px; color: #555; }
+
+  .before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .ba-cell { background: #fff; padding: 16px; }
+  .ba-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #aaa; margin-bottom: 8px; }
+  .ba-metric { font-size: 13px; color: #555; margin-bottom: 4px; }
+  .ba-metric strong { color: #111; }
+  .ba-metric .after { color: #111; font-weight: 700; }
+  .ba-metric .before { color: #aaa; text-decoration: line-through; }
+
+  .steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+  }
+  .step-num {
+    font-size: 20px;
+    font-weight: 900;
+    color: #ddd;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 28px;
+  }
+  .step-content { }
+  .step-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .step-text { font-size: 12px; color: #555; }
+
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #e8e8e8;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .social-cell { background: #fff; padding: 16px; text-align: center; }
+  .social-num { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .social-label { font-size: 11px; color: #777; margin-top: 2px; }
+
+  .quote-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .quote-card {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .quote-marks { font-size: 24px; color: #ddd; line-height: 1; margin-bottom: 6px; }
+  .quote-text { font-size: 12px; color: #555; font-style: italic; margin-bottom: 12px; }
+  .quote-author { font-size: 11px; font-weight: 600; color: #111; }
+  .quote-role { font-size: 11px; color: #888; }
+
+  .cases-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .case-card {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .case-tag {
+    display: inline-block;
+    background: #f0f0f0;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    color: #555;
+  }
+  .case-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .case-desc { font-size: 12px; color: #777; margin-bottom: 10px; }
+  .case-metrics { display: flex; flex-direction: column; gap: 4px; }
+  .case-metric { font-size: 12px; color: #555; }
+  .case-metric .val-after { font-weight: 700; color: #111; }
+  .case-metric .val-before { color: #bbb; text-decoration: line-through; margin-right: 4px; }
+  .case-big-num { font-size: 28px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+  .case-big-label { font-size: 11px; color: #888; margin-top: 2px; }
+
+  .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .service-card {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .service-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .service-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .service-list li { font-size: 12px; color: #555; padding-left: 12px; position: relative; }
+  .service-list li::before { content: '—'; position: absolute; left: 0; color: #ccc; }
+
+  .cta-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #e8e8e8; border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+  .cta-step { background: #fff; padding: 20px 16px; }
+  .cta-step-num { font-size: 28px; font-weight: 900; color: #eee; line-height: 1; margin-bottom: 8px; }
+  .cta-step-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .cta-step-text { font-size: 12px; color: #777; }
+
+  .contacts { display: flex; gap: 32px; align-items: flex-start; }
+  .contact-photo { width: 60px; height: 60px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; text-align: center; flex-shrink: 0; }
+  .contact-info { }
+  .contact-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .contact-role { font-size: 12px; color: #888; margin-bottom: 12px; }
+  .contact-links { display: flex; flex-direction: column; gap: 4px; }
+  .contact-link { font-size: 13px; color: #111; }
+
+  .big-text { font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px; }
+
+  /* ─── CALLOUT-ПЛАШКИ ─── */
+  .callout {
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .callout-designer {
+    background: #f0f5ff;
+    border-left: 3px solid #007aff;
+    color: #333;
+  }
+  .callout-designer .callout-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #007aff;
+    margin-bottom: 6px;
+  }
+  .callout-optional {
+    background: #fffbf0;
+    border-left: 3px solid #ff9500;
+    color: #333;
+  }
+  .callout-optional .callout-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #ff9500;
+    margin-bottom: 6px;
+  }
+
+  /* ─── MISSING DATA ─── */
+  .missing {
+    background: #fff2f0;
+    border: 1px solid #ffccc7;
+    color: #cf1322;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11.5px;
+    font-weight: 500;
+    display: inline-block;
+  }
+  .missing-block {
+    background: #fff2f0;
+    border: 1px solid #ffccc7;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+  .missing-block .missing-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #cf1322;
+    margin-bottom: 6px;
+  }
+  .missing-block .missing-text { font-size: 12px; color: #cf1322; }
+
+  /* ─── DIVIDER ─── */
+  .divider { border: none; border-top: 1px solid #f0f0f0; margin: 24px 0; }
+
+  /* ─── PRINT ─── */
+  @media print {
+    body { background: #fff; }
+    .slide { margin-bottom: 0; box-shadow: none; }
+    @page { margin: 0; size: A4 landscape; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ -->
+<!-- ОБЛОЖКА ДОКУМЕНТА                      -->
+<!-- ══════════════════════════════════════ -->
+<div class="doc-cover">
+  <h1>NEXMAN — Клиентская презентация</h1>
+  <p class="sub">Шаблон для утверждения и передачи в дизайн</p>
+  <div class="doc-meta">
+    <div class="doc-meta-item">
+      <div class="label">Версия</div>
+      <div class="value">1.0</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="label">Дата</div>
+      <div class="value">24 мая 2026</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="label">Статус</div>
+      <div class="value">Черновик — на утверждении</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="label">Следующий шаг</div>
+      <div class="value">Заполнить блоки 🔴, утвердить → передать дизайнеру</div>
+    </div>
+  </div>
+
+  <div class="doc-notation">
+    <h3>Обозначения в документе</h3>
+    <div class="notation-grid">
+      <div class="notation-item">
+        <span class="notation-badge red">🔴 НУЖНО</span>
+        <span class="notation-text">Данные отсутствуют. Обязательно заменить до передачи дизайнеру.</span>
+      </div>
+      <div class="notation-item">
+        <span class="notation-badge optional">⚠️ ОПЦИОНАЛЬНО</span>
+        <span class="notation-text">Блок включается или убирается в зависимости от ситуации.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════ -->
+<!-- СЛАЙД 1 — ОБЛОЖКА                     -->
+<!-- ══════════════════════════════════════ -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-number">Слайд 1</span>
+    <span class="slide-title">Обложка</span>
+  </div>
+  <div class="slide-body">
+
+    <div class="slide-meta">
+      <div class="slide-meta-item"><strong>Цель:</strong> За 10 секунд читатель понимает, кто мы, для кого и почему нам можно доверять — без чтения дальше.</div>
+      <div class="slide-meta-item"><strong>Закрывает страхи:</strong> сайт есть, но результата нет / слабая экспертиза в нише</div>
+    </div>
+
+    <h3>Главный заголовок</h3>
+    <p class="big-text">Строим цифровые продукты, которые окупаются — и доказываем это до начала работ</p>
+
+    <h3>Подзаголовок</h3>
+    <p class="big-text">Прежде чем взять деньги, мы показываем, что именно вырастет, на сколько и за счёт чего.</p>
+
+    <h3>Три факта</h3>
+    <div class="facts-row">
+      <div class="fact-cell">
+        <span class="fact-number">2010</span>
+        <span class="fact-desc">год основания</span>
+      </div>
+      <div class="fact-cell">
+        <span class="fact-number">50</span>
+        <span class="fact-desc">специалистов в штате</span>
+      </div>
+      <div class="fact-cell">
+        <span class="fact-number">2 место</span>
+        <span class="fact-desc">WDA 2026</span>
+      </div>
+    </div>
+
+    <h3>Награда</h3>
+    <div class="award-badge">
+      <span class="award-icon">🏆</span>
+      <div class="award-text">
+        <div class="award-title">WDA 2026 — 2 место</div>
+        <div class="award-sub">«Комплексные продукты для застройщиков»</div>
+      </div>
+    </div>
+
+    <h3>Визуальная зона — кейс до/после</h3>
+    <div class="before-after">
+      <div class="ba-cell">
+        <div class="ba-label">До</div>
+        <div class="ba-metric">Отказы: <strong class="before">24%</strong></div>
+        <div class="ba-metric">Глубина просмотра: <strong class="before">2,3 стр.</strong></div>
+        <div class="ba-metric">Время на сайте: <strong class="before">3:30 мин</strong></div>
+      </div>
+      <div class="ba-cell">
+        <div class="ba-label">После</div>
+        <div class="ba-metric">Отказы: <strong class="after">10%</strong></div>
+        <div class="ba-metric">Глубина просмотра: <strong class="after">5 страниц</strong></div>
+        <div class="ba-metric">Время на сайте: <strong class="after">5:00 мин</strong></div>
+      </div>
+    </div>
+    <p style="font-size:12px; color:#888; margin-bottom:8px;">Федеральный застройщик. Редизайн 17 жилых комплексов.</p>
+    <div class="missing-block">
+      <div class="missing-label">🔴 Нужно</div>
+      <div class="missing-text">Скрины сайта ГК Основа до и после в высоком разрешении.</div>
+    </div>
+
+    <hr class="divider">
+    <div class="callout callout-optional">
+      <div class="callout-label">⚠️ Опционально — блок «Для кого»</div>
+      Убрать если презентация идёт конкретному клиенту из одной ниши. Оставить только в универсальной версии.<br><br>
+      <strong>Девелоперы · Банки · Производства · eCom · EdTech · Стартапы</strong>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════ -->
+<!-- СЛАЙД 2 — КАК УСТРОЕНА РАБОТА         -->
+<!-- ══════════════════════════════════════ -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-number">Слайд 2</span>
+    <span class="slide-title">Как устроена работа</span>
+  </div>
+  <div class="slide-body">
+
+    <div class="slide-meta">
+      <div class="slide-meta-item"><strong>Цель:</strong> Читатель понимает, что агентство не пропадёт после первого платежа и работает системно, не разово.</div>
+      <div class="slide-meta-item"><strong>Закрывает страхи:</strong> сорванные сроки / рост бюджета / нет прозрачности / подрядчик пропадает</div>
+    </div>
+
+    <h3>Заголовок слайда</h3>
+    <p class="big-text">Вы всегда знаете, что происходит и зачем</p>
+
+    <h3>Процесс — 5 шагов</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Понимаете, за что платите</div>
+          <div class="step-text">Обсуждаем цели — и фиксируем KPI до начала работ. Оплачиваете не «разработку», а конкретный результат.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Видите, что вырастет и на сколько</div>
+          <div class="step-text">Проводим аналитику — CJM, SEO, юзабилити, тайный покупатель. Приходим с цифрами: что сделать, сколько стоит, как изменится конверсия.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Получаете только нужное</div>
+          <div class="step-text">Никаких «заодно сделаем». Каждая задача — с метрикой и обоснованием.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Видите результат до полного запуска</div>
+          <div class="step-text">Работаем итерациями. Правки вносите по ходу — не после полугода ожидания.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Продукт растёт — вы не толкаете нас</div>
+          <div class="step-text">Сами приходим с идеями, тестами и метриками. Средний клиент работает с нами <span class="missing">🔴 НУЖНО: реальная цифра лет</span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <h3>Социальное доказательство</h3>
+
+    <div class="social-grid">
+      <div class="social-cell">
+        <div class="social-num"><span class="missing">🔴 Х</span></div>
+        <div class="social-label">задач в месяц<br>для застройщиков</div>
+      </div>
+      <div class="social-cell">
+        <div class="social-num"><span class="missing">🔴 Х</span></div>
+        <div class="social-label">задач в месяц<br>для банков</div>
+      </div>
+      <div class="social-cell">
+        <div class="social-num"><span class="missing">🔴 Х</span></div>
+        <div class="social-label">задач в месяц<br>для производств</div>
+      </div>
+    </div>
+    <div class="missing-block">
+      <div class="missing-label">🔴 Все цифры выше — заглушка. Заменить реальными данными.</div>
+    </div>
+
+    <div class="quote-cards">
+      <div class="quote-card">
+        <div class="quote-marks">"</div>
+        <div class="quote-text"><span class="missing">🔴 Цитата клиента — конкретная, с результатом. Пример: «За три месяца после редизайна заявки выросли вдвое. Ребята сами пришли с идеями для следующего этапа.»</span></div>
+        <div class="quote-author"><span class="missing">🔴 Имя Фамилия</span></div>
+        <div class="quote-role"><span class="missing">🔴 Должность, Компания</span></div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-marks">"</div>
+        <div class="quote-text"><span class="missing">🔴 Цитата клиента</span></div>
+        <div class="quote-author"><span class="missing">🔴 Имя Фамилия</span></div>
+        <div class="quote-role"><span class="missing">🔴 Должность, Компания</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════ -->
+<!-- СЛАЙД 3 — РЕЗУЛЬТАТЫ КЛИЕНТОВ         -->
+<!-- ══════════════════════════════════════ -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-number">Слайд 3</span>
+    <span class="slide-title">Результаты клиентов</span>
+  </div>
+  <div class="slide-body">
+
+    <div class="slide-meta">
+      <div class="slide-meta-item"><strong>Цель:</strong> Читатель видит реальные изменения после работы с NEXMAN — в метриках, не в словах.</div>
+      <div class="slide-meta-item"><strong>Закрывает страхи:</strong> сайт есть, но результата нет / слабая экспертиза в нише</div>
+    </div>
+
+    <h3>Заголовок слайда</h3>
+    <p class="big-text">Что изменилось после запуска</p>
+    <p style="font-size:13px; color:#555; margin-bottom:20px;">Работаем с компаниями с оборотом от 1 млрд — и показываем, что именно меняется.</p>
+
+    <div class="cases-grid">
+
+      <!-- Кейс 1 -->
+      <div class="case-card">
+        <div>
+          <span class="case-tag">Девелопер</span>
+          <div class="case-name">ГК Основа</div>
+          <div class="case-desc">Разработка и 5+ лет поддержки крупного федерального девелопера: сайты, лендинги, 3D, рендеры, коммуникации, тексты и другие задачи.</div>
+          <div class="award-badge" style="margin-bottom:8px; padding:6px 12px;">
+            <span style="font-size:14px;">🏆</span>
+            <div>
+              <div style="font-size:10px; font-weight:700;">WDA 2026 — 2 место</div>
+              <div style="font-size:11px; color:#555;">«Комплексные продукты для застройщиков»</div>
+            </div>
+          </div>
+          <div class="before-after" style="margin-bottom:0;">
+            <div class="ba-cell">
+              <div class="ba-label">До</div>
+              <div class="ba-metric">Отказы: <strong class="before">24%</strong></div>
+              <div class="ba-metric">Глубина: <strong class="before">2,3 стр.</strong></div>
+              <div class="ba-metric">Время: <strong class="before">3:30</strong></div>
+            </div>
+            <div class="ba-cell">
+              <div class="ba-label">После</div>
+              <div class="ba-metric">Отказы: <strong class="after">10%</strong></div>
+              <div class="ba-metric">Глубина: <strong class="after">5 страниц</strong></div>
+              <div class="ba-metric">Время: <strong class="after">5:00</strong></div>
+            </div>
+          </div>
+          <div class="missing-block" style="margin-top:8px;">
+            <div class="missing-label">🔴 Нужно</div>
+            <div class="missing-text">Бизнес-результат: выросли ли лиды / заявки / сделки?</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div class="case-big-num">2700+</div>
+          <div class="case-big-label">задач выполнено</div>
+          <p style="margin-top:12px;"><a style="font-size:12px; color:#007aff; text-decoration:none; border:1px solid #007aff; padding:4px 10px; border-radius:4px;">Подробнее →</a></p>
+        </div>
+      </div>
+
+      <!-- Кейс 2 -->
+      <div class="case-card">
+        <div>
+          <span class="case-tag">Производство</span>
+          <div class="case-name">ТВЭЛ ПЭКС</div>
+          <div class="case-desc">Комплексный редизайн промышленного сайта. Выручка компании 1,2 млрд руб. 50+ услуг.</div>
+          <div class="before-after" style="margin-bottom:0; margin-top:10px;">
+            <div class="ba-cell">
+              <div class="ba-label">До</div>
+              <div class="ba-metric">Отказы: <strong class="before">28%</strong></div>
+              <div class="ba-metric">Глубина: <strong class="before">2,1 стр.</strong></div>
+              <div class="ba-metric">Время: <strong class="before">1:50</strong></div>
+            </div>
+            <div class="ba-cell">
+              <div class="ba-label">После</div>
+              <div class="ba-metric">Отказы: <strong class="after">12%</strong></div>
+              <div class="ba-metric">Глубина: <strong class="after">4,6 стр.</strong></div>
+              <div class="ba-metric">Время: <strong class="after">3:50</strong></div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div class="case-big-num">×2</div>
+          <div class="case-big-label">время на сайте</div>
+          <p style="margin-top:12px;"><a style="font-size:12px; color:#007aff; text-decoration:none; border:1px solid #007aff; padding:4px 10px; border-radius:4px;">Подробнее →</a></p>
+        </div>
+      </div>
+
+      <!-- Кейс 3 -->
+      <div class="case-card">
+        <div>
+          <span class="case-tag">FMCG / Производство</span>
+          <div class="case-name">Круазетт</div>
+          <div class="case-desc">Сайт с нуля под продажи B2B и B2C. Анализ, воронки, дизайн, 3D, front/back. Выручка 1,5 млрд руб.</div>
+          <div class="case-metrics" style="margin-top:10px;">
+            <div class="case-metric">Отказы с первого дня: <span class="val-after">ниже 6%</span></div>
+            <div class="case-metric">Время на сайте: <span class="val-after">4:10 мин</span></div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div class="case-big-num">8→27</div>
+          <div class="case-big-label">заявок в неделю</div>
+          <p style="margin-top:12px;"><a style="font-size:12px; color:#007aff; text-decoration:none; border:1px solid #007aff; padding:4px 10px; border-radius:4px;">Подробнее →</a></p>
+        </div>
+      </div>
+
+      <!-- Кейс 4 — Багерстат -->
+      <div class="case-card" style="border-color:#ffccc7; background:#fffafa;">
+        <div>
+          <span class="case-tag" style="background:#ffccc7; color:#cf1322;">🔴 Критично</span>
+          <div class="case-name">Багерстат</div>
+          <div class="case-desc">Выручка 5,3 млрд руб. Самый крупный публичный клиент — без кейса он немой.</div>
+          <div class="missing-block">
+            <div class="missing-label">🔴 Нужно заполнить до передачи дизайнеру</div>
+            <div class="missing-text">Что делали, ключевые метрики до/после, бизнес-результат.</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div class="case-big-num" style="color:#ffccc7;">?</div>
+          <div class="case-big-label" style="color:#cf1322;">главная цифра</div>
+        </div>
+      </div>
+
+      <!-- Кейс 5 — Банк -->
+      <div class="case-card" style="border-color:#ffccc7; background:#fffafa;">
+        <div>
+          <span class="case-tag" style="background:#ffccc7; color:#cf1322;">🔴 Нужен кейс</span>
+          <div class="case-name">Банк или крупный застройщик</div>
+          <div class="case-desc">Ключевая ниша в позиционировании — кейса нет. Можно анонимно: «Банк из ТОП-10» или «Федеральный девелопер».</div>
+          <div class="missing-block">
+            <div class="missing-label">🔴 Нужно</div>
+            <div class="missing-text">Описание работ (без NDA), метрики до/после, хотя бы одна цифра в деньгах или сделках.</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div class="case-big-num" style="color:#ffccc7;">?</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════ -->
+<!-- СЛАЙД 4 — ЧТО МЫ ДЕЛАЕМ              -->
+<!-- ══════════════════════════════════════ -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-number">Слайд 4</span>
+    <span class="slide-title">Что мы делаем</span>
+  </div>
+  <div class="slide-body">
+
+    <div class="slide-meta">
+      <div class="slide-meta-item"><strong>Цель:</strong> Читатель понимает полный спектр задач, которые NEXMAN закрывает. В одной команде, без субподрядчиков.</div>
+      <div class="slide-meta-item"><strong>Закрывает страхи:</strong> слабая экспертиза в нише / подрядчик пропадает после оплаты</div>
+    </div>
+
+    <h3>Заголовок слайда</h3>
+    <p class="big-text">Одна команда — весь путь от замера до запуска</p>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-title">Аналитика и стратегия</div>
+        <ul class="service-list">
+          <li>Аудит сайта, UX, SEO, продуктовый анализ</li>
+          <li>Тайный покупатель — включая другие города</li>
+          <li>CJM, BPMN, анализ воронок и отдела продаж</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-title">Дизайн</div>
+        <ul class="service-list">
+          <li>Интерфейсы и анимация любой сложности</li>
+          <li>От промо-лендинга до ERP-системы на 50 пользователей</li>
+          <li>3D-моделирование, брендинг</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-title">Разработка</div>
+        <ul class="service-list">
+          <li>Сайты, порталы, корпоративные платформы</li>
+          <li>Сложные калькуляторы, боты, внутренние системы</li>
+          <li>Документированный код — поддерживаем и развиваем годами</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-title">Цифровизация и AI</div>
+        <ul class="service-list">
+          <li>Цифровые двойники производства</li>
+          <li>Внедрение нейросетей в бизнес-процессы</li>
+          <li>Автоматизация типовых задач</li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="text-align:center; font-size:12px; color:#aaa; margin-top:8px;">
+      Портфолио: nexman.org &nbsp;·&nbsp; behance.net/vnexman &nbsp;·&nbsp; dprofile.ru/nexman
+    </p>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════ -->
+<!-- СЛАЙД 5 — СЛЕДУЮЩИЙ ШАГ              -->
+<!-- ══════════════════════════════════════ -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-number">Слайд 5</span>
+    <span class="slide-title">Следующий шаг</span>
+  </div>
+  <div class="slide-body">
+
+    <div class="slide-meta">
+      <div class="slide-meta-item"><strong>Цель:</strong> Читатель понимает одно конкретное действие и то, что первый шаг безопасен и бесплатен.</div>
+      <div class="slide-meta-item"><strong>Закрывает страхи:</strong> подрядчик пропадает после оплаты / незаметный рост бюджета</div>
+    </div>
+
+    <h3>Заголовок слайда</h3>
+    <p class="big-text">Бесплатная диагностика — готовый план за 48 часов</p>
+
+    <p style="font-size:14px; color:#444; line-height:1.7; margin-bottom:28px;">
+      Расскажите о задаче — за 48 часов мы разберём ваш сайт и процессы,
+      найдём, где теряются клиенты, и покажем конкретные шаги роста.
+      Готовый план — до любых договорённостей об оплате.
+    </p>
+
+    <div class="cta-steps">
+      <div class="cta-step">
+        <div class="cta-step-num">1</div>
+        <div class="cta-step-title">Созвон 15 минут</div>
+        <div class="cta-step-text">Рассказываете о задачах</div>
+      </div>
+      <div class="cta-step">
+        <div class="cta-step-num">2</div>
+        <div class="cta-step-title">Аудит 48 часов</div>
+        <div class="cta-step-text">Мы разбираем сайт и процессы</div>
+      </div>
+      <div class="cta-step">
+        <div class="cta-step-num">3</div>
+        <div class="cta-step-title">План с цифрами</div>
+        <div class="cta-step-text">Что сделать, сколько стоит, что вырастет</div>
+      </div>
+    </div>
+
+
+    <hr class="divider">
+    <h3>Контакты</h3>
+    <div class="contacts">
+      <div class="contact-photo">Фото<br><span class="missing" style="font-size:10px;">🔴</span></div>
+      <div class="contact-info">
+        <div class="contact-name"><span class="missing">🔴 Имя Фамилия</span></div>
+        <div class="contact-role"><span class="missing">🔴 Должность</span></div>
+        <div class="contact-links">
+          <span class="contact-link">Telegram: @nexman_design</span>
+          <span class="contact-link">Email: hi@nexman.org</span>
+          <span class="contact-link">nexman.org</span>
+        </div>
+      </div>
+    </div>
+    <div class="missing-block" style="margin-top:16px;">
+      <div class="missing-label">🔴 Нужно</div>
+      <div class="missing-text">Имя и фото конкретного человека, которому пишут. Без имени — контакт в пустоту.</div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>
